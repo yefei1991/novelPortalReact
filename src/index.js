@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Top from './yefei/Top';
+import Top from './yefei/components/Top';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(<Top />, document.getElementById('root'));
