@@ -1,4 +1,4 @@
-import { Row, Col,Card,List,Modal,Button } from 'antd'
+import { Row, Col,Card,List,Modal,Button,Spin } from 'antd'
 import React, { Component } from 'react';
 import axios from "axios"
 import './Top.css';
@@ -6,7 +6,7 @@ import './Top.css';
 class Test extends Component {
     constructor(props){
         super(props)
-        this.state={visible:false,novels:[],chapters:[],currChapter:{}}
+        this.state={chaptersLoading:false,visible:false,novels:[],chapters:[],currChapter:{}}
     }
     componentDidMount() {
         axios.get('/api/bookList').then(res=>{
@@ -40,20 +40,21 @@ class Test extends Component {
     }
 
     novelClicked(novelId){
+        this.setState({chaptersLoading:true})
         axios.get('/api/chapterList?novelId='+novelId).then(res=>{
             for(let i=0;i<res.data.data.chapters.length;i++){
                 res.data.data.chapters[i].index=i;
             }
-            this.setState({chapters:res.data.data.chapters});
+            this.setState({chapters:res.data.data.chapters,chaptersLoading:false});
         })
     }
     chapterClicked(chapterIndex){
+        this.setState({chaptersLoading:true})
         let currChapter=this.state.chapters[chapterIndex]
         currChapter.index=chapterIndex
         axios.get('/api/chapterDetail?chapterId='+currChapter.id).then(res=>{
             currChapter.detail=res.data.data.content
-            this.setState({currChapter:currChapter})
-            this.setState({visible:true});
+            this.setState({currChapter:currChapter,visible:true,chaptersLoading:false})
         })
     }
     render() {
@@ -71,16 +72,18 @@ class Test extends Component {
                     />
                 </Col>
                 <Col span={18}>
-                    <List
-                        style={{ width: '99%' ,marginRight:'0.5%',marginTop:20}}
-                        grid={{ gutter: 16, column: 4 }}
-                        dataSource={this.state.chapters}
-                        renderItem={item => (
-                        <List.Item onClick={this.chapterClicked.bind(this,item.index)}>
-                            <Card>{item.title}</Card>
-                        </List.Item>
-                        )}
-                    />
+                    <Spin size="large" spinning={this.state.chaptersLoading}>
+                        <List
+                            style={{ width: '99%' ,marginRight:'0.5%',marginTop:20}}
+                            grid={{ gutter: 16, column: 4 }}
+                            dataSource={this.state.chapters}
+                            renderItem={item => (
+                            <List.Item onClick={this.chapterClicked.bind(this,item.index)}>
+                                <Card>{item.title}</Card>
+                            </List.Item>
+                            )}
+                        />
+                    </Spin>
                 </Col>
                 </Row>
                 <Modal
