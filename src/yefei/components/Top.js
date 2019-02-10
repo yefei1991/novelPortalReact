@@ -5,8 +5,8 @@ import './Top.css';
 class Top extends Component {
   render() {
     return (
-      <div className="top321">
-        <Button/>
+      <div className="top">
+        <Button name="第一个按钮"/>
       </div>
     );
   }
