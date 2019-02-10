@@ -30,7 +30,6 @@ class Test extends Component {
     }
 
     handlePrev=()=>{
-        let i=1
         let index=this.state.currChapter.index-1
         let currChapter=this.state.chapters[index]
         currChapter.index=index
